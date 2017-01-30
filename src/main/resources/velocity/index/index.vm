@@ -1,0 +1,8 @@
+#parse("/velocity/layout.vm")
+#@mainLayout()
+    <center>
+            <h1>There are currently $users user(s) enrolled with us!</h1>
+            <h2>Will You be the next to join?<h2>
+            <h3>Click <a href="$WebPath.getCREATE()">here</a> to join the other $users user(s) currently with us.</h3>
+    </center>
+#end

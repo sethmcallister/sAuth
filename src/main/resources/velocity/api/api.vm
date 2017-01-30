@@ -1,0 +1,7 @@
+<form id="apiForm" method="get">
+    #if($canAuthenticate)
+        <pre style="word-wrap: break-word; white-space: pre-wrap;">true</pre>
+    #else
+        <pre style="word-wrap: break-word; white-space: pre-wrap;">false</pre>
+     #end
+</form>

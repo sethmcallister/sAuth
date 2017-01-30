@@ -1,0 +1,19 @@
+#parse("/velocity/layout.vm")
+#@mainLayout()
+    <center>
+        #if($signedIn)
+            <ul id="account-menu">
+                <li>
+                    <form method="post" action="$WebPath.getLOGOUT()">
+                        <button id="logout">$msg.get("COMMON_NAV_LOGOUT")</button>
+                    </form>
+                </li>
+            </ul>
+            <hr>
+            <h2>Phone Number: $currentUser</h2>
+            <h2>Auth Token: $currentUserCode<h2>
+        #else
+            <h2>You are not logged in, please login <a href="/login/">here</a></h2>
+        #end
+    </center>
+#end

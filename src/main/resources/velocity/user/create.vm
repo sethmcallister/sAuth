@@ -1,0 +1,19 @@
+#parse("/velocity/layout.vm")
+#@mainLayout()
+<form id="createForm" method="post">
+    #if($creationFailed)
+        <p class="bad notification">That phone-number is already in use, please use another one.</p>
+    #elseif($authenticationSucceeded)
+        <p class="good notification">You have successfully created a signed up!</p>
+    #end
+
+        <h1>Register</h1>
+        <p>Please enter your phone number.</p>
+        <label>Phone Number</label>
+        <input type="text" name="username" placeholder="$msg.get("CREATE_LABEL_USERNAME")" value="" required>
+        #if($loginRedirect)
+            <input type="hidden" name="loginRedirect" value="$loginRedirect">
+        #end
+        <input type="submit" value="Create Account">
+</form>
+#end
