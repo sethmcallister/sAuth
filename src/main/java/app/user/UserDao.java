@@ -1,15 +1,13 @@
 package app.user;
 
+import app.serialziers.PasswordSerializer;
 import app.serialziers.UserSerialzier;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.mindrot.jbcrypt.BCrypt;
+import app.user.password.PasswordEntry;
 import redis.clients.jedis.Jedis;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -18,17 +16,57 @@ public class UserDao
     private final List<User> users;
     private final Jedis jedis;
     private final String jedisKey = "sauth.users.";
+    private final String passKey = "sauth.pass.";
+    private final List<PasswordEntry> passwords;
 
     public UserDao()
     {
-        this.users = new LinkedList<>();
         this.jedis = new Jedis();
+        this.users = loadAllFromRedis();
+        this.passwords = loadAllPasswordsFromRedis();
 
-        User adminUser = new User("admin");
-        adminUser.getSalt().set("$2a$10$h.dl5J86rGH7I8bD9bZeZe");
-        adminUser.getHashedPassword().set(BCrypt.hashpw("password", "$2a$10$h.dl5J86rGH7I8bD9bZeZe"));
-        adminUser.getFACode().set(RandomStringUtils.randomAlphabetic(30));
-        users.add(adminUser);
+        for(PasswordEntry passwordEntry : passwords)
+        {
+            if(passwordEntry.getUserName().get() != null)
+            {
+                getUserByUsername(passwordEntry.getUserName().get()).getPasswords().add(passwordEntry);
+            }
+        }
+
+        System.out.println("everything loaded");
+    }
+
+    private List<PasswordEntry> loadAllPasswordsFromRedis()
+    {
+        System.out.println("loading passwords");
+        List<PasswordEntry> passwords = new ArrayList<>();
+        for(String key : jedis.keys(passKey + "*"))
+        {
+            String passStrig = this.jedis.get(key);
+            PasswordEntry passwordEntry = new PasswordSerializer().deserialize(passStrig);
+            passwords.add(passwordEntry);
+        }
+        System.out.println("loaded all passwrods");
+        return passwords;
+    }
+
+    public void savePasswordToRedis(PasswordEntry passwordEntry)
+    {
+        jedis.set(passKey + UUID.randomUUID().toString(), new PasswordSerializer().serialize(passwordEntry));
+    }
+
+    private List<User> loadAllFromRedis()
+    {
+        System.out.println("loading all users");
+        List<User> users = new ArrayList<>();
+        for(String key : jedis.keys(jedisKey + "*"))
+        {
+            String userString = this.jedis.get(key);
+            User user = new UserSerialzier().deserialize(userString);
+            users.add(user);
+        }
+        System.out.println("loaded all users");
+        return users;
     }
 
     public User loadFromRedis(String key)
@@ -37,6 +75,12 @@ public class UserDao
         User user = new UserSerialzier().deserialize(userString);
         this.users.add(user);
         return user;
+    }
+
+    public void saveToRedis(User user)
+    {
+        String userString = new UserSerialzier().serialize(user);
+        this.jedis.set(jedisKey + user.getUsername().get(), userString);
     }
 
     public boolean unloadToRedis(User user)

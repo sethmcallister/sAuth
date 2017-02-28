@@ -5,16 +5,20 @@ import app.user.User;
 import app.user.UserController;
 import app.util.Path;
 import app.util.ViewUtil;
-import com.twilio.rest.api.v2010.account.Message;
-import com.twilio.type.PhoneNumber;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.mindrot.jbcrypt.BCrypt;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
+import javax.mail.Message;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import static app.util.RequestUtil.*;
 
@@ -62,7 +66,9 @@ public class LoginController
         request.session().attribute("currentUser", getQueryUsername(request));
 
         User user = new User(getQueryUsername(request));
-        String password = "password";
+
+        String password = Long.toHexString(Double.doubleToLongBits(Math.random()));
+//        String password = "password";
         String salt = BCrypt.gensalt();
         String hashPassword = BCrypt.hashpw(password, salt);
         user.getSalt().set(salt);
@@ -71,13 +77,31 @@ public class LoginController
 
         Application.getApplication().getUserDao().addUser(user);
 
-        PhoneNumber to = new PhoneNumber(getQueryUsername(request));
-        PhoneNumber from = new PhoneNumber("+441315102407");
-        String body = ("Thank You for using sAuth, Your login code for the account " + user.getUsername().get() + " is " + password + ". If You encounter any issues contact support@sethy.xyz");
-        Message message = Message.creator(to, from, body).create();
-        System.out.println(message.getSid());
+        String to = getQueryUsername(request);
+        String from = "noreply@sethy.xyz";
+        String host = "localhost";
 
-        System.out.println("done texT?");
+        Properties properties = System.getProperties();
+        properties.setProperty("mail.smtp.host", host);
+
+        String body = ("Thank You for using sAuth, Your login code for the account " + user.getUsername().get() + " is " + password + ". If You encounter any issues contact support@sethy.xyz");
+
+        Session session = Session.getDefaultInstance(properties);
+
+
+        MimeMessage message = new MimeMessage(session);
+
+        message.setFrom(new InternetAddress(from));
+
+        message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+
+        message.setSubject("Your sAuth account password.");
+        message.setText(body);
+
+        Transport.send(message);
+
+
+        Application.getApplication().getUserDao().saveToRedis(user);
 
         if (getQueryLoginRedirect(request) != null)
         {

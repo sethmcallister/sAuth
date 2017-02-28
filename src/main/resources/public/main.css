@@ -12,7 +12,6 @@ html, body {
 
 body {
     padding: 0 0 40px;
-    color: #333;
     background: #f9f9f9;
 }
 
@@ -24,6 +23,11 @@ h1, h2, h3, h4 {
 
 small {
     color: #555;
+}
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
 }
 
 header {
@@ -44,6 +48,7 @@ nav #menu {
 }
 
 a {
+    text-decoration: none;
     color: #ff7761;
 }
 
@@ -66,10 +71,6 @@ a {
     text-decoration: none;
 }
 
-#account-menu {
-    background: #b3b3b3;
-    box-shadow: 0 1px 0 0 rgba(0,0,0,.6);
-}
 
 #logo {
     max-height: 50px;
@@ -215,7 +216,7 @@ nav ul, nav li {
 
 /* Book related stuff */
 
-a.book {
+a.password {
     display: block;
     text-align: center;
     text-decoration: none;
@@ -224,25 +225,25 @@ a.book {
     border-radius: 5px;
 }
 
-a.book:hover {
+a.password:hover {
     background: #e2e9f5;
 }
 
-a .bookCover {
+a .passwordCover {
     padding: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-a .bookCover img {
+a .passwordCover img {
     border-radius: 5px;
     min-height: 200px;
     max-height: 200px;
     width: auto;
 }
 
-.bookCover img {
+.passwordCover img {
     margin-top: 20px;
     border-radius: 10px;
     width: 100%;

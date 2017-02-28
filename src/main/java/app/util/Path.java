@@ -4,7 +4,6 @@ import lombok.Getter;
 
 public class Path
 {
-
     // The @Getter methods are needed in order to access
     // the variables from Velocity Templates
     public static class Web
@@ -21,6 +20,8 @@ public class Path
         public static final String API = "/api/:name/:code/";
         @Getter
         public static final String LANDING = "/";
+        @Getter
+        public static final String MY_PASSWORDS = "/my/passwords/";
     }
 
     public static class Template
@@ -31,5 +32,6 @@ public class Path
         public final static String API = "/velocity/api/api.vm";
         public static final String NOT_FOUND = "/velocity/notFound.vm";
         public static final String LANDING = "/velocity/index/index.vm";
+        public static final String MY_PASSWORDS = "/velocity/user/password/password.vm";
     }
 }

@@ -25,6 +25,16 @@ public class RequestUtil
         return request.queryParams("password");
     }
 
+    public static String getQueryAccountName(Request request)
+    {
+        return request.queryParams("accountName");
+    }
+
+    public static String getQueryAccountPassword(Request request)
+    {
+        return request.queryParams("accountPassword");
+    }
+
     public static String getQueryLoginRedirect(Request request)
     {
         return request.queryParams("loginRedirect");

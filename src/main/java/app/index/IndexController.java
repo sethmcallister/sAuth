@@ -4,12 +4,12 @@ import app.Application;
 import app.user.User;
 import app.util.Path;
 import app.util.ViewUtil;
-import org.apache.commons.lang3.RandomStringUtils;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class IndexController
 {
@@ -21,6 +21,7 @@ public class IndexController
             model.put("signedIn", true);
             User user = Application.getApplication().getUserDao().getUserByUsername(request.session().attribute("currentUser"));
             model.put("currentUserCode", user.getFACode().get());
+            model.put("passwords", user.getPasswords());
         }
         else
             model.put("signedIn", false);

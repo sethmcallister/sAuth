@@ -28,5 +28,6 @@ dependencies {
     compile group: 'org.mindrot', name: 'jbcrypt', version: '0.3m'
     compile 'redis.clients:jedis:2.9.0'
     compile 'com.google.code.gson:gson:2.6.1'
-    compile 'com.twilio.sdk:twilio:7.4.0'
+    compile 'com.sun.mail:android-mail:1.5.5'
+    compile 'com.sun.mail:android-activation:1.5.5'
 }
