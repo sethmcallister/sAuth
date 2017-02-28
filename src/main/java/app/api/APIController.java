@@ -18,7 +18,7 @@ public class APIController
 {
     public static Route serveAPI = (Request request, Response response) ->
     {
-        Map<String, Object> model = new ConcurrentHashMap<>();
+        Map<String, Object> model = new HashMap<>();
         User user = Application.getApplication().getUserDao().getUserByUsername(request.params("name"));
         model.put("username", user.getUsername().get());
         model.put("code", user.getFACode().get());
